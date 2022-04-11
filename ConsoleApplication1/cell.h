@@ -58,11 +58,29 @@ class cell {
 
 	 //kelvin
 	 double temperature;
+	 double meltingPoint;
 
 	 //mass is in kg
 	 //size is 1 cm cube or 0.01 meters
 	 //water has mass 9.97
 	 double mass;
+
+
+	 //basic enumerator
+	 // 0 - air
+	 // 1 - sand
+	 // 2 - water
+	 // 3 - snow
+	 // 4 - steam
+	 // 5 - ice
+	 // 6 - molten sand
+	 // 10 - solid (wall, used as bounding box)
+	 int typeID;
+
+	 //what material the object turns into at melting point
+	 int meltIntoID;
+	 //what material the object turns into at freezing point
+	 int freezeIntoID;
 
 	 cell(unsigned int Seed = 0);
 	 cell(grid Grid, unsigned int Seed, int x, int y, sf::Color setColor);
@@ -105,6 +123,9 @@ private:
 	void calcMagnitudeVectors();
 
 	void calcTrunc();
+
+	//Jon's functions
+	void updateMaterial(int id);
 
 };
 

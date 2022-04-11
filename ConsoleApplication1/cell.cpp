@@ -18,6 +18,7 @@ cell::cell(unsigned int Seed) {
 	//place holders
 	thermalConductivity = 1;
 	mass = 10;
+	meltingPoint = 1000;
 
 	genThermal();
 
@@ -47,7 +48,6 @@ cell::cell(grid Grid, unsigned int Seed, int X, int Y, sf::Color Color)
 	//place holders
 	thermalConductivity = 1;
 	mass = 10;
-
 	genThermal();
 
 	color = Color;
@@ -180,4 +180,12 @@ void cell::calcTrunc()
 {
 	x_t = trunc(x);
 	y_t = trunc(y);
+}
+
+//Jon's functions
+
+//Updates the 
+void cell::updateMaterial(int id) {
+	typeID = id;
+
 }
