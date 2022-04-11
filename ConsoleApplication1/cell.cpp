@@ -8,6 +8,9 @@ cell::cell(unsigned int Seed) {
 	srand(seed);
 	calcTrunc();
 
+	cell* cellsAround = new cell[4];
+	cell* cellsAroundNext = new cell[4];
+
 	forceComponentVector = new double[2];
 	forceVector = new double[2];
 	velocityComponentVector = new double[2];
@@ -25,17 +28,19 @@ cell::cell(unsigned int Seed) {
 
 }
 
-cell::cell(grid Grid, unsigned int Seed, int X, int Y, sf::Color Color)
+cell::cell(unsigned int Seed, int X, int Y, sf::Color Color)
 {
-	parentGrid = Grid;
+
 	x = X;
 	y = Y;
 
 	seed = hypot(x * Seed, y * Seed);
 
 	srand(seed);
-
 	calcTrunc();
+
+	cell* cellsAround = new cell[4];
+	cell* cellsAroundNext = new cell[4];
 
 	forceComponentVector = new double[2];
 	forceVector = new double[2];
@@ -88,6 +93,17 @@ sf::Color cell::getColor()
 	return color;
 }
 
+double cell::getTemp() {
+	return temperature;
+}
+
+void cell::setNeighbor(int Dir, cell* pointer) {
+
+	cellsAround[Dir] = cellsAroundNext[Dir];
+	cellsAroundNext[Dir] = *pointer;
+
+}
+
 void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int A)
 {
 
@@ -101,24 +117,19 @@ void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int
 //TODO
 void cell::adjustTemperature()
 {
-	cell** cellsAround = new cell*[4];
-
-	//grabs pointers
-	//up = [0]
-	//down = [1]
-	//right = [2]
-	//left = [3]
-	cellsAround[0] = parentGrid.cellAt(this, x, y + 1);
-	cellsAround[1] = parentGrid.cellAt(this, x, y - 1);
-	cellsAround[2] = parentGrid.cellAt(this, x + 1, y);
-	cellsAround[3] = parentGrid.cellAt(this, x - 1, y);
-
+	
+	/*
+	cellsAround[0] = *parentGrid.cellAt(this, x, y + 1);
+	cellsAround[1] = *parentGrid.cellAt(this, x, y - 1);
+	cellsAround[2] = *parentGrid.cellAt(this, x + 1, y);
+	cellsAround[3] = *parentGrid.cellAt(this, x - 1, y);
+	*/
 
 	//TODO temp change
-	double averageSurroundTemp;
+	double averageSurroundTemp = 0;
 	for (int i = 0; i < 4; i++) {
-		if (cellsAround[i] != this) {
-			averageSurroundTemp += cellsAround[i]->temperature;
+		if (&cellsAround[i] != this) {
+			averageSurroundTemp += cellsAround[i].getTemp();
 		}
 	}
 	averageSurroundTemp /= 4.0;
