@@ -1,15 +1,16 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <queue>
-#include "grid.h"
+//#include "grid.h"
 
 
 class cell {
 
  private:
 
-	//pointer to parent grid
-	grid* parentGrid;
+	 
+	 cell* cellsAround;
+	 cell* cellsAroundNext;
 
 	//seed for random
 	unsigned int seed;
@@ -54,18 +55,18 @@ class cell {
 	//color of cell
 	sf::Color color;
 
+	//mass is in kg
+	//size is 1 cm cube or 0.01 meters
+	//water has mass 9.97
+	double mass;
+
+	//kelvin
+	double temperature;
+
  public:
 
-	 //kelvin
-	 double temperature;
-
-	 //mass is in kg
-	 //size is 1 cm cube or 0.01 meters
-	 //water has mass 9.97
-	 double mass;
-
 	 cell(unsigned int Seed = 0);
-	 cell(grid Grid, unsigned int Seed, int x, int y, sf::Color setColor);
+	 cell(unsigned int Seed, int x, int y, sf::Color setColor);
 
 	 /// <summary>
 	 /// adds a force component vector to the cell's forceVector queue
@@ -84,6 +85,14 @@ class cell {
 	 sf::Vector2f getPosition();
 	 sf::Vector2f getExactPosition();
 	 sf::Color getColor();
+	 double getTemp();
+
+	 ///uses pointers
+	 ///up = [0]
+	 ///down = [1]
+	 ///left = [2]
+	 ///right = [3]
+	 void setNeighbor(int Dir, cell* pointer);
 
 	 void setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int A = 255);
 
