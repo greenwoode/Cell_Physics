@@ -73,6 +73,11 @@ double* cell::getVelocityVector(bool update)
 	return velocityVector;
 }
 
+double * cell::getVelocityComponentVector()
+{
+	return velocityComponentVector;
+}
+
 sf::Vector2f cell::getPosition()
 {
 	return sf::Vector2f(x_t, y_t);
@@ -95,6 +100,31 @@ void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int
 	color.g = G;
 	color.b = B;
 	color.a = A;
+
+}
+
+void cell::impact(cell otherCell){
+	double otherMass = otherCell.mass;
+	double* otherForceComp = otherCell.getVelocityComponentVector();
+	
+	double totalMass = otherMass + mass;
+
+	double totalForceX = velocityComponentVector[0] + otherForceComp[0];
+	double totalForceY = velocityComponentVector[1] + otherForceComp[1];
+
+	// a = sum of F/ sum of weight	
+	double accelerationX = totalForceX / totalMass;
+	double accelerationY = totalForceY / totalMass;
+	
+	// Calculate counter Force for our cell 
+	// Fc (counter force for this cell) = this.Force - this.Mass*acceleration
+	double FcX = velocityComponentVector[0] - mass * accelerationX;
+	double FcY = velocityComponentVector[1] - mass * accelerationY;
+
+	
+	// Calculate counter force for other cell
+
+
 
 }
 

@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
         // draw to the window
         glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
-        //flush pixel array
+        //flush pixel array (In theory, prevent ghosting)
         memset(pixels, 0, sizeof(pixels));
 
         // deactivate the window's context

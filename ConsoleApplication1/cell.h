@@ -81,11 +81,25 @@ class cell {
 	 /// <returns>double[2]: velocity Vector</returns>
 	 double* getVelocityVector(bool update=false);
 
+	 /// <summary>
+	 /// Return the velocity componant vector of this cell
+	 /// </summary>
+	 /// <returns>double[2]: velocity/force component vector</return>
+	 double* getVelocityComponentVector();
+
+
 	 sf::Vector2f getPosition();
 	 sf::Vector2f getExactPosition();
 	 sf::Color getColor();
 
 	 void setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int A = 255);
+
+	 /// <summary>
+	 /// Return amount of force this cell excert on the otherCell
+	 /// </summary>
+	 /// <param name="otherCell">: The cell which our cell is colliding with</param>
+	 /// <returns>Does not return anything but add a force vector to otherCell while aslo add an equal force to current cell</returns>
+	 void impact(cell otherCell);
 
 private:
 
