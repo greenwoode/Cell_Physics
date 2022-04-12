@@ -103,28 +103,42 @@ void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int
 
 }
 
-void cell::impact(cell otherCell){
+void cell::impact(cell otherCell) {
 	double otherMass = otherCell.mass;
 	double* otherForceComp = otherCell.getVelocityComponentVector();
+	double* counterForce = new double[2];
+	double* ForceOnOther = new double[2];
+
+	double totalMass = mass + otherMass;
+	double normalForce = mass * 9.8;
+	double otherNormalForce = otherMass * 9.8;
+
+	// Counter force 
+	// formatted as [x,y]
+	double* Fc = new double[2];
+
+
+	// a = Sum of forces / total mass
+	// ax = (F1x) / total mass
+	// ay = (F1x + normalForce1) / total mass
+	double ax = (velocityComponentVector[0]) / totalMass;
+	double ay = (velocityComponentVector[1]) / totalMass;
+
+	// counter force for our cell
+	// sumFx = F - Fc
+	// m1a = F - Fc
+	// Fc = F - m1a
+	counterForce[0] = velocityComponentVector[0] - mass * ax;
+	counterForce[1] = velocityComponentVector[1] - mass * ay;
+
+	ForceOnOther[0] = otherMass * ax;
+	ForceOnOther[1] = otherMass * ay;
+
+	// addForceVector to our cell
+	addForceVector(counterForce);
 	
-	double totalMass = otherMass + mass;
-
-	double totalForceX = velocityComponentVector[0] + otherForceComp[0];
-	double totalForceY = velocityComponentVector[1] + otherForceComp[1];
-
-	// a = sum of F/ sum of weight	
-	double accelerationX = totalForceX / totalMass;
-	double accelerationY = totalForceY / totalMass;
-	
-	// Calculate counter Force for our cell 
-	// Fc (counter force for this cell) = this.Force - this.Mass*acceleration
-	double FcX = velocityComponentVector[0] - mass * accelerationX;
-	double FcY = velocityComponentVector[1] - mass * accelerationY;
-
-	
-	// Calculate counter force for other cell
-
-
+	// addForceVector to other cell
+	otherCell.addForceVector(ForceOnOther);
 
 }
 
