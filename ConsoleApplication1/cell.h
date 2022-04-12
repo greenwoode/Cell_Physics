@@ -97,6 +97,8 @@ class cell {
 	 /// <summary>
 	 /// Return amount of force this cell excert on the otherCell
 	 /// Imagine ourCell hit the other cell
+	 /// Our Cell = the cell we are focus on
+	 /// Other Cell = the cell we are hitting
 	 /// </summary>
 	 /// <param name="otherCell">: The cell which our cell is colliding with</param>
 	 /// <returns>Does not return anything but add a force vector to our cell and otherCell</returns>
