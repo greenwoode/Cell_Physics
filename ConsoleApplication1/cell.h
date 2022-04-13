@@ -103,14 +103,11 @@ class cell {
 
 	 void setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int A = 255);
 
-	 /// <summary>
-	 /// This Function is called when the cell is move
-	 /// This will check it neighbor and see if they are going to collide
-	 /// If Yes  then call impact
-	 /// If no then ignore
-	 /// </summary>
-	 /// <returns> nothing </returns>
-	 void move();
+	 /// Just move stuff
+	 int move(int addX, int addY);
+
+	 int move(cell otherCell);
+
 
 	 /// <summary>
 	 /// This method check if our cell is collisding with anothercell

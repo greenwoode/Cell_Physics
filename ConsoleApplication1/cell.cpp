@@ -120,38 +120,16 @@ void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int
 }
 
 // TODO: 1. Implement this
-/*
-	Step 1: check if velocity is != 0
-			If yes then step 2
-	Step 2: check if there are neighbor next to it
-					If yes then call impact
-					else nothing happend
-*/
-void cell::move()
-{
-	// Check velocity
-	// If both are zero then they are not moving, in theory would stop it from moving
-	if (velocityComponentVector[0] != 0 || velocityComponentVector[1] != 0) {
-		// Check neighbors
-		if (velocityComponentVector[0] > 0 && velocityComponentVector[1] == 0) {
-			// Goin right => check right
-		} else if (velocityComponentVector[0] == 0 && velocityComponentVector[1] > 0) {
-			// goin up => check top
-		} else if (velocityComponentVector[0] < 0 && velocityComponentVector[1] == 0) {
-			// goin left => check left neighbor
-		} else if (velocityComponentVector[0] == 0 && velocityComponentVector[1] < 0) {
-			// goin down => check bottom neighbor
-		} else if (velocityComponentVector[0] > 0 && velocityComponentVector[1] > 0) {
-			// goin up right => check top and right
-		} else if (velocityComponentVector[0] < 0 && velocityComponentVector[1] > 0) {
-			// goin up left => check up and left
-		} else if (velocityComponentVector[0] > 0 && velocityComponentVector[1] < 0) {
-			// goin down right => check bottom and right
-		} else if (velocityComponentVector[0] < 0 && velocityComponentVector[1] < 0) {
-			// goin down left => check bottom and left
-		}
+void cell::move(double timeScale) {
+	x += velocityComponentVector[0];
+	y += velocityComponentVector[1];
+}
 
-	}
+void cell::move(cell otherCell, double timeScale){
+	impact(otherCell);
+	otherCell.move(timeScale);
+	x += velocityComponentVector[0];
+	y += velocityComponentVector[1];
 }
 
 // TODO: Check if this is needed
