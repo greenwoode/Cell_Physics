@@ -103,10 +103,19 @@ class cell {
 
 	 void setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int A = 255);
 
-	 /// Just move stuff
-	 int move(int addX, int addY);
+	 /// <summary>
+	 /// move cell according to velocity vector
+	 /// </summary>
+	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
+	 void move(double timeScale);
 
-	 int move(cell otherCell);
+	 /// <summary>
+	 /// move cell according to velocity vector
+	 /// However this one will impact with another cell first then move
+	 /// </summary>
+	 /// <param name="otherCell">: The cell which our cell is colliding with</param>
+	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
+	 void move(cell otherCell, double timeScale);
 
 
 	 /// <summary>
