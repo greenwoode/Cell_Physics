@@ -184,8 +184,22 @@ void cell::calcTrunc()
 
 //Jon's functions
 
-//Updates the 
+//Updates the material
 void cell::updateMaterial(int id) {
 	typeID = id;
+}
+
+//LOGIC to add to Cell Update
+
+void cell::updateInformation() {
+	//Temporary for sake of no errors
+	int freeze;
+	int meltingPoint;
+	int temperature;
+	int meltIntoID;
+
+	if (temperature > meltingPoint) {
+		updateMaterial(meltIntoID);
+	}
 
 }

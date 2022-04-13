@@ -126,6 +126,8 @@ private:
 
 	//Jon's functions
 	void updateMaterial(int id);
+	//TEMP USED FOR STORAGE
+	void updateInformation();
 
 };
 
