@@ -15,8 +15,8 @@
 
 
 //Local Stuff
-//#include "grid.h"
-//#include "cell.h"
+#include "grid.h"
+#include "cell.h"
 
 void flushPixels(sf::Uint8*);
 
@@ -43,23 +43,14 @@ int main(int argc, char *argv[]) {
     
     // [i][j][k] = [width][height][depth] = 
     // [(i * 4) + (j * width * 4) + k]
-    sf::Uint8* pixels = new sf::Uint8[width * height * 4];
-
-    /*cell* cells = new cell[width * height];
-    for (int i = 0; i < width; i++) {
-        for (int j = 0; j < height; j++) {
-            cells[i + j * width] = cell(i, j, sf::Color());
-            cells[i + j * width].setColor(i%255, 0 , j%255);
-        }
-    }*/
+    unsigned char* pixels = new unsigned char[width * height * 4];
 
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
 
-            //pixels[(i * 4) + (j * width * 4) + 0] = i % 255;
-            //pixels[(i * 4) + (j * width * 4) + 1] = (i + j) % 255;
-            //pixels[(i * 4) + (j * width * 4) + 2] = j % 255;
-            //pixels[(i * 4) + (j * width * 4) + 3] = (255 - ((i * j) % 255));
+            pixels[(i * 4) + (j * width * 4) + 0] = 0;
+            pixels[(i * 4) + (j * width * 4) + 1] = 0;
+            pixels[(i * 4) + (j * width * 4) + 2] = 0;
 
         }
     }
@@ -104,6 +95,7 @@ int main(int argc, char *argv[]) {
 
         window.clear();
 
+        /*
         #pragma omp parallel for schedule(dynamic, 256)
         for (int i = 0; i < width; i++) {
             //printf("Thread %d: i=%d\n", omp_get_thread_num(), i);
@@ -113,10 +105,11 @@ int main(int argc, char *argv[]) {
                 //pixels[(i * 4) + (j * width * 4) + 0] = (i + frame) % 255;
                 //pixels[(i * 4) + (j * width * 4) + 1] = ((i + j) + frame) % 255;
                 //pixels[(i * 4) + (j * width * 4) + 2] = (j + frame) % 255;
-                //pixels[(i * 4) + (j * width * 4) + 3] = (255 - (((i * j) + frame) % 255));
 
             }
         }
+        */
+
 
         // activate the window's context
         window.setActive(true);
@@ -125,14 +118,14 @@ int main(int argc, char *argv[]) {
 
         
         // clear framebuffers
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
         // draw to the window
         glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
         //flush pixel array
-        memset(pixels, 0, sizeof(pixels));
+        //memset(pixels, 0, sizeof(pixels));
 
         // deactivate the window's context
         window.setActive(false);

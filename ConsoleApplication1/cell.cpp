@@ -24,7 +24,7 @@ cell::cell(unsigned int Seed) {
 
 	genThermal();
 
-	setColor(255, 255, 255);
+	color = sf::Color(255,255,255,255);
 
 }
 
