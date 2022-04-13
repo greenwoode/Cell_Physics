@@ -24,3 +24,6 @@
 hs_err_pid*
 .vs/slnx.sqlite
 *.sqlite
+
+# project files
+*.sln
