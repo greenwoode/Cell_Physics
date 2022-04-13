@@ -8,6 +8,9 @@ cell::cell(unsigned int Seed) {
 	srand(seed);
 	calcTrunc();
 
+	cell* cellsAround = new cell[4];
+	cell* cellsAroundNext = new cell[4];
+
 	forceComponentVector = new double[2];
 	forceVector = new double[2];
 	velocityComponentVector = new double[2];
@@ -25,17 +28,19 @@ cell::cell(unsigned int Seed) {
 
 }
 
-cell::cell(grid Grid, unsigned int Seed, int X, int Y, sf::Color Color)
+cell::cell(unsigned int Seed, int X, int Y, sf::Color Color)
 {
-	parentGrid = Grid;
+
 	x = X;
 	y = Y;
 
 	seed = hypot(x * Seed, y * Seed);
 
 	srand(seed);
-
 	calcTrunc();
+
+	cell* cellsAround = new cell[4];
+	cell* cellsAroundNext = new cell[4];
 
 	forceComponentVector = new double[2];
 	forceVector = new double[2];
@@ -93,6 +98,17 @@ sf::Color cell::getColor()
 	return color;
 }
 
+double cell::getTemp() {
+	return temperature;
+}
+
+void cell::setNeighbor(int Dir, cell* pointer) {
+
+	cellsAround[Dir] = cellsAroundNext[Dir];
+	cellsAroundNext[Dir] = *pointer;
+
+}
+
 void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int A)
 {
 
@@ -103,66 +119,106 @@ void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int
 
 }
 
+// TODO: 1. Implement this
+/*
+	Step 1: check if velocity is != 0
+			If yes then step 2
+	Step 2: check if there are neighbor next to it
+					If yes then call impact
+					else nothing happend
+*/
+void cell::move()
+{
+	// Check velocity
+	// If both are zero then they are not moving, in theory would stop it from moving
+	if (velocityComponentVector[0] != 0 || velocityComponentVector[1] != 0) {
+		// Check neighbors
+		if (velocityComponentVector[0] > 0 && velocityComponentVector[1] == 0) {
+			// Goin right => check right
+		} else if (velocityComponentVector[0] == 0 && velocityComponentVector[1] > 0) {
+			// goin up => check top
+		} else if (velocityComponentVector[0] < 0 && velocityComponentVector[1] == 0) {
+			// goin left => check left neighbor
+		} else if (velocityComponentVector[0] == 0 && velocityComponentVector[1] < 0) {
+			// goin down => check bottom neighbor
+		} else if (velocityComponentVector[0] > 0 && velocityComponentVector[1] > 0) {
+			// goin up right => check top and right
+		} else if (velocityComponentVector[0] < 0 && velocityComponentVector[1] > 0) {
+			// goin up left => check up and left
+		} else if (velocityComponentVector[0] > 0 && velocityComponentVector[1] < 0) {
+			// goin down right => check bottom and right
+		} else if (velocityComponentVector[0] < 0 && velocityComponentVector[1] < 0) {
+			// goin down left => check bottom and left
+		}
+
+	}
+}
+
+// TODO: Check if this is needed
+bool cell::collisionCheck(cell otherCell)
+{
+	sf::Vector2f otherPos = otherCell.getExactPosition();
+	sf::Vector2f ourPos = getExactPosition();
+
+	if (ourPos == otherPos) {
+		impact(otherCell);
+		return true;
+	}
+	return false;
+}
+
+// https://sci-hub.se/https://aapt.scitation.org/doi/10.1119/1.2165433#:~:text=These%20formulas%20are%20derived%20from,1m1%20%2B%20m2
 void cell::impact(cell otherCell) {
+	/*
+		Equation:
+			U1 = ((m1 - m2)(u1 - u2))/(m1 + m2) + u2
+			U2 = (2m1(u1 - u2))/(m1 + m2) + u2
+
+			u = inital velocity
+			U = final velocity
+
+		this need to be done in both axis
+	*/
 	double otherMass = otherCell.mass;
-	double* otherForceComp = otherCell.getVelocityComponentVector();
-	double* counterForce = new double[2];
-	double* ForceOnOther = new double[2];
-
+	double* otherInitialVComp = otherCell.getVelocityComponentVector();
+	double* ourInitalVComp = getVelocityComponentVector();
 	double totalMass = mass + otherMass;
-	double normalForce = mass * 9.8;
-	double otherNormalForce = otherMass * 9.8;
 
-	// Counter force 
-	// formatted as [x,y]
-	double* Fc = new double[2];
+	double* FinalVelocity = new double[2];
+	double* otherFinalVelocity = new double[2];
 
+	// U1x and U2x
+	FinalVelocity[0] = (((mass - otherMass)*(ourInitalVComp[0] - otherInitialVComp[0])) / (mass + otherMass)) + otherInitialVComp[0];
+	otherFinalVelocity[0] = ((2 * mass*(ourInitalVComp[0] - otherInitialVComp[0])) / (totalMass)) + otherInitialVComp[0];
 
-	// a = Sum of forces / total mass
-	// ax = (F1x) / total mass
-	// ay = (F1x + normalForce1) / total mass
-	double ax = (velocityComponentVector[0]) / totalMass;
-	double ay = (velocityComponentVector[1]) / totalMass;
+	// U1y and U2y
+	FinalVelocity[0] = (((mass - otherMass)*(ourInitalVComp[0] - otherInitialVComp[0])) / (mass + otherMass)) + otherInitialVComp[0];
+	otherFinalVelocity[0] = ((2 * mass*(ourInitalVComp[0] - otherInitialVComp[0])) / (totalMass)) + otherInitialVComp[0];
 
-	// counter force for our cell
-	// sumFx = F - Fc
-	// m1a = F - Fc
-	// Fc = F - m1a
-	counterForce[0] = velocityComponentVector[0] - mass * ax;
-	counterForce[1] = velocityComponentVector[1] - mass * ay;
+	// add final velocity to our cell
+	addForceVector(FinalVelocity);
 
-	ForceOnOther[0] = otherMass * ax;
-	ForceOnOther[1] = otherMass * ay;
-
-	// addForceVector to our cell
-	addForceVector(counterForce);
-	
-	// addForceVector to other cell
-	otherCell.addForceVector(ForceOnOther);
+	// add final velocity to other cell
+	otherCell.addForceVector(otherFinalVelocity);
 
 }
 
 //TODO
 void cell::adjustTemperature()
 {
-	cell** cellsAround = new cell*[4];
-
-	//grabs pointers
-	//up = [0]
-	//down = [1]
-	//right = [2]
-	//left = [3]
-	cellsAround[0] = parentGrid.cellAt(this, x, y + 1);
-	cellsAround[1] = parentGrid.cellAt(this, x, y - 1);
-	cellsAround[2] = parentGrid.cellAt(this, x + 1, y);
-	cellsAround[3] = parentGrid.cellAt(this, x - 1, y);
-
+	
+	/*
+	cellsAround[0] = *parentGrid.cellAt(this, x, y + 1);
+	cellsAround[1] = *parentGrid.cellAt(this, x, y - 1);
+	cellsAround[2] = *parentGrid.cellAt(this, x + 1, y);
+	cellsAround[3] = *parentGrid.cellAt(this, x - 1, y);
+	*/
 
 	//TODO temp change
-	double averageSurroundTemp;
+	double averageSurroundTemp = 0;
 	for (int i = 0; i < 4; i++) {
-		if (cellsAround[i] != this) {
-			averageSurroundTemp += cellsAround[i]->temperature;
+		if (&cellsAround[i] != this) {
+			averageSurroundTemp += cellsAround[i].getTemp();
 		}
 	}
 	averageSurroundTemp /= 4.0;
