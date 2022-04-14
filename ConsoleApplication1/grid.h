@@ -16,5 +16,6 @@ class grid {
 
 	 void* cellAt(cell* self, double target_x, double target_y);
 
+	 double getMass(cell* self, int id);
 };
 

@@ -19,13 +19,11 @@ class cell {
 
 	// old x position
 	double oldX;
-
 	// old y position
 	double oldY;
 
 	//precise x position
 	double x;
-
 	//precise y position
 	double y;
 	//truncated x position
@@ -65,7 +63,6 @@ class cell {
 	//size is 1 cm cube or 0.01 meters
 	//water has mass 9.97
 	double mass;
-
 
 	 //kelvin
 	 double temperature;

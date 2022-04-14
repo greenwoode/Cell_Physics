@@ -136,20 +136,20 @@ void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int
 void cell::update(double timeStep) {
 	double timeScale = timeStep;
 	try {
-		// Decide which neighbor to check
-		// Convert Degerees to radient
-		// M_PI cant be found apparently so im using the number
-		// double rAlpha = velocityVector[1] * 3.141593 / 180;
-		// int newX = cos(rAlpha);
-		// int newY = sin(rAlpha);
-		// sf::Vector2f pos = getPosition();
-		// int dirX,dirY;
 
+		// Temp calucation + state change
+		// Temp check 273.1
+		//	 Type check
+		//		water => temp check (temp == 273.1)
+							//=> state change
+
+
+		// Decide which neighbor to check
 		cell* destinationX = &cellsAround[getDirX()];
 		cell* destinationY = &cellsAround[getDirY()];
 
-		// moveing stuff
-		// if theres not neighbors just move
+		// moving stuff
+		// if theres no neighbors just move
 		// if there is neighbors check which direction
 		if (destinationX == nullptr && destinationY == nullptr) {
 			move(timeScale);		
@@ -320,13 +320,13 @@ void cell::updateMaterial(int id) {
 
 void cell::updateInformation() {
 	//Temporary for sake of no errors
-	int freeze;
-	int meltingPoint;
-	int temperature;
-	int meltIntoID;
+	//int freeze;
+	//int meltingPoint;
+	//int temperature;
+	//int meltIntoID;
 
-	if (temperature > meltingPoint) {
-		updateMaterial(meltIntoID);
-	}
+	//if (temperature > meltingPoint) {
+	//	updateMaterial(meltIntoID);
+	//}
 
 }
