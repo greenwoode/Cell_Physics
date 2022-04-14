@@ -1,3 +1,5 @@
+#include <iostream>
+#include <cmath>
 #include "cell.h"
 
 cell::cell(unsigned int Seed) {
@@ -83,6 +85,18 @@ double * cell::getVelocityComponentVector()
 	return velocityComponentVector;
 }
 
+int cell::getDirX() {
+	if (x - oldX > 0)
+		return 3;
+	return 2;
+}
+
+int cell::getDirY() {
+	if (y - oldY > 0)
+		return 0;
+	return 1;
+}
+
 sf::Vector2f cell::getPosition()
 {
 	return sf::Vector2f(x_t, y_t);
@@ -119,34 +133,67 @@ void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int
 
 }
 
-// TODO: 1. Implement this
-void cell::move(double timeScale) {
-	x += velocityComponentVector[0];
-	y += velocityComponentVector[1];
-}
+void cell::update(double timeStep) {
+	double timeScale = timeStep;
+	try {
+		// Decide which neighbor to check
+		// Convert Degerees to radient
+		// M_PI cant be found apparently so im using the number
+		// double rAlpha = velocityVector[1] * 3.141593 / 180;
+		// int newX = cos(rAlpha);
+		// int newY = sin(rAlpha);
+		// sf::Vector2f pos = getPosition();
+		// int dirX,dirY;
 
-void cell::move(cell otherCell, double timeScale){
-	impact(otherCell);
-	otherCell.move(timeScale);
-	x += velocityComponentVector[0];
-	y += velocityComponentVector[1];
-}
+		cell* destinationX = &cellsAround[getDirX()];
+		cell* destinationY = &cellsAround[getDirY()];
 
-// TODO: Check if this is needed
-bool cell::collisionCheck(cell otherCell)
-{
-	sf::Vector2f otherPos = otherCell.getExactPosition();
-	sf::Vector2f ourPos = getExactPosition();
-
-	if (ourPos == otherPos) {
-		impact(otherCell);
-		return true;
+		// moveing stuff
+		// if theres not neighbors just move
+		// if there is neighbors check which direction
+		if (destinationX == nullptr && destinationY == nullptr) {
+			move(timeScale);		
+		} else {
+			if (destinationY != nullptr && destinationY != nullptr) {
+				move(destinationX, destinationY, timeScale);
+			} else if (destinationY == nullptr) {
+				move(destinationX,timeScale);
+			} else if (destinationY == nullptr) {
+				move(destinationY, timeScale);
+			}
+		}
+	} catch (const std::exception& e) {
+		std::cout << e.what();
 	}
-	return false;
+
 }
 
-// https://sci-hub.se/https://aapt.scitation.org/doi/10.1119/1.2165433#:~:text=These%20formulas%20are%20derived%20from,1m1%20%2B%20m2
-void cell::impact(cell otherCell) {
+void cell::move(double timeScale) {
+	oldX = x;
+	oldY = y;
+	x += velocityComponentVector[0] * timeScale;
+	y += velocityComponentVector[1] * timeScale;
+}
+
+void cell::move(cell *otherCell, double timeScale) {
+	impact(otherCell);
+	otherCell->move(timeScale);
+	oldX = x;
+	oldY = y;
+	x += velocityComponentVector[0] * timeScale;
+	y += velocityComponentVector[1] * timeScale;
+}
+
+void cell::move(cell *otherCellX, cell *otherCellY, double timeScale){
+	impact(otherCellX);
+	impact(otherCellY);
+	otherCellX->move(timeScale);
+	otherCellY->move(timeScale);
+	x += velocityComponentVector[0] * timeScale;
+	y += velocityComponentVector[1] * timeScale;
+}
+
+void cell::impact(cell *otherCell) {
 	/*
 		Equation:
 			U1 = ((m1 - m2)(u1 - u2))/(m1 + m2) + u2
@@ -157,8 +204,8 @@ void cell::impact(cell otherCell) {
 
 		this need to be done in both axis
 	*/
-	double otherMass = otherCell.mass;
-	double* otherInitialVComp = otherCell.getVelocityComponentVector();
+	double otherMass = otherCell->mass;
+	double* otherInitialVComp = otherCell->getVelocityComponentVector();
 	double* ourInitalVComp = getVelocityComponentVector();
 	double totalMass = mass + otherMass;
 
@@ -177,7 +224,7 @@ void cell::impact(cell otherCell) {
 	addForceVector(FinalVelocity);
 
 	// add final velocity to other cell
-	otherCell.addForceVector(otherFinalVelocity);
+	otherCell->addForceVector(otherFinalVelocity);
 
 }
 

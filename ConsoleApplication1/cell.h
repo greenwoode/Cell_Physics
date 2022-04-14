@@ -17,6 +17,12 @@ class cell {
 
 	double thermalConductivity;
 
+	// old x position
+	double oldX;
+
+	// old y position
+	double oldY;
+
 	//precise x position
 	double x;
 
@@ -88,6 +94,15 @@ class cell {
 	 /// <returns>double[2]: velocity/force component vector</return>
 	 double* getVelocityComponentVector();
 
+	 /// <summer>
+	 /// get the direction the cell is moving in the X axis
+	 /// </summer>
+	 int getDirX();
+
+	 /// <summer>
+	 /// get the direction the cell is moving in the Y axis
+	 /// </summer>
+	 int getDirY();
 
 	 sf::Vector2f getPosition();
 	 sf::Vector2f getExactPosition();
@@ -104,6 +119,12 @@ class cell {
 	 void setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int A = 255);
 
 	 /// <summary>
+	 /// This function move 
+	 /// </summary>
+	 /// <param name="timeStep">: This will scale cell movement base on largest velocity (pass in from grid)</param>
+	 void update(double timeStep);
+
+	 /// <summary>
 	 /// move cell according to velocity vector
 	 /// </summary>
 	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
@@ -115,17 +136,16 @@ class cell {
 	 /// </summary>
 	 /// <param name="otherCell">: The cell which our cell is colliding with</param>
 	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
-	 void move(cell otherCell, double timeScale);
-
+	 void move(cell *otherCell, double timeScale);
 
 	 /// <summary>
-	 /// This method check if our cell is collisding with anothercell
-	 /// It start by checking if the velocity vector is 0 or not
-	 /// If yes then check the neighbor in its relative position
+	 /// move cell according to velocity vector
+	 /// However this one will impact with 2 cell first then move
 	 /// </summary>
-	 /// <param name="otherCell">: The cell which our cell is colliding with</param>
-	 /// <returns>return true and call the impact function when it does colide with something</returns>
-	 bool collisionCheck(cell otherCell);
+	 /// <param name="otherCellX">: The cell which our cell is colliding with on the X axis</param>
+	 /// <param name="otherCellY">: The cell which our cell is colliding with on the Y axis</param>
+	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
+	 void move(cell *otherCellX, cell *otherCellY, double timeScale);
 
 	 /// <summary>
 	 /// Calculate the force that is excerted onto both cell after they impacted
@@ -140,7 +160,7 @@ class cell {
 	 /// </summary>
 	 /// <param name="otherCell">: The cell which our cell is colliding with</param>
 	 /// <returns>Does not return anything but add a force vector to our cell and otherCell</returns>
-	 void impact(cell otherCell);
+	 void impact(cell *otherCell);
 
 private:
 
