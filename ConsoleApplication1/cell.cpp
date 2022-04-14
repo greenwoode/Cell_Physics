@@ -189,6 +189,8 @@ void cell::move(cell *otherCellX, cell *otherCellY, double timeScale){
 	impact(otherCellY);
 	otherCellX->move(timeScale);
 	otherCellY->move(timeScale);
+	oldX = x;
+	oldY = y;
 	x += velocityComponentVector[0] * timeScale;
 	y += velocityComponentVector[1] * timeScale;
 }
