@@ -23,6 +23,7 @@ cell::cell(unsigned int Seed) {
 	//place holders
 	thermalConductivity = 1;
 	mass = 10;
+	meltingPoint = 1000;
 
 	genThermal();
 
@@ -54,7 +55,6 @@ cell::cell(unsigned int Seed, int X, int Y, sf::Color Color)
 	//place holders
 	thermalConductivity = 1;
 	mass = 10;
-
 	genThermal();
 
 	color = Color;
@@ -305,4 +305,26 @@ void cell::calcTrunc()
 {
 	x_t = trunc(x);
 	y_t = trunc(y);
+}
+
+//Jon's functions
+
+//Updates the material
+void cell::updateMaterial(int id) {
+	typeID = id;
+}
+
+//LOGIC to add to Cell Update
+
+void cell::updateInformation() {
+	//Temporary for sake of no errors
+	int freeze;
+	int meltingPoint;
+	int temperature;
+	int meltIntoID;
+
+	if (temperature > meltingPoint) {
+		updateMaterial(meltIntoID);
+	}
+
 }
