@@ -12,11 +12,11 @@ class grid {
 	 unsigned int width;
 	 unsigned int height;
 
-
-
 	 bool targetIsEmpty();
 
-	 void* cellAt(cell* self, double target_x, double target_y);
+	 cell* cellAt(cell* self, double target_x, double target_y);
+
+
 
 };
 

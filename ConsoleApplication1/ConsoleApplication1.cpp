@@ -40,21 +40,6 @@ int main(int argc, char *argv[]) {
     text.setCharacterSize(25);
     text.setString("0");
     text.setFillColor(sf::Color::White);
-
-
-    //rectangle
-    // define a 120x50 rectangle
-    sf::RectangleShape rectangle(sf::Vector2f(120, 50));
-    // change the size to 100x100
-    rectangle.setSize(sf::Vector2f(height / 2, width / 1));
-    rectangle.setFillColor(sf::Color(42, 58,61));
-    rectangle.setOrigin(0,0);
-    rectangle.setPosition(1000, 0);
-
-
-
-
-
     
     // [i][j][k] = [width][height][depth] = 
     // [(i * 4) + (j * width * 4) + k]
@@ -71,10 +56,10 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
 
-            pixels[(i * 4) + (j * width * 4) + 0] = i % 255;
-           pixels[(i * 4) + (j * width * 4) + 1] = (i + j) % 255;
-            pixels[(i * 4) + (j * width * 4) + 2] = j % 255;
-           pixels[(i * 4) + (j * width * 4) + 3] = (255 - ((i * j) % 255));
+            //pixels[(i * 4) + (j * width * 4) + 0] = i % 255;
+            //pixels[(i * 4) + (j * width * 4) + 1] = (i + j) % 255;
+            //pixels[(i * 4) + (j * width * 4) + 2] = j % 255;
+            //pixels[(i * 4) + (j * width * 4) + 3] = (255 - ((i * j) % 255));
 
         }
     }
@@ -87,6 +72,7 @@ int main(int argc, char *argv[]) {
     bool running = true;
 
     clock.restart();
+
     while (running)
     {
 
@@ -102,6 +88,7 @@ int main(int argc, char *argv[]) {
             {
                 // adjust the viewport when the window is resized
                 glViewport(0, 0, event.size.width, event.size.height);
+
             }
         }
         
@@ -117,28 +104,29 @@ int main(int argc, char *argv[]) {
 
         window.clear();
 
-       #pragma omp parallel for schedule(dynamic, 256)
+        #pragma omp parallel for schedule(dynamic, 256)
         for (int i = 0; i < width; i++) {
             //printf("Thread %d: i=%d\n", omp_get_thread_num(), i);
             for (int j = 0; j < height; j++) {
                 //cells[i + j * width].setColor((cells[i + j * width].getColor().r + 1) % 255, 0, (cells[i + j * width].getColor().b + 1) % 255);
-                
-                pixels[(i * 4) + (j * width * 4) + 0] = (pixels[(i * 4) + (j * width * 4) + 0] + 1) % 255;
-              //  pixels[(i * 4) + (j * width * 4) + 1] = (pixels[(i * 4) + (j * width * 4) + 1] + 1) % 255;
-                pixels[(i * 4) + (j * width * 4) + 2] = (pixels[(i * 4) + (j * width * 4) + 2] + 1) % 255;
-                //pixels[(i * 4) + (j * width * 4) + 3] = (pixels[(i * 4) + (j * width * 4) + 3] + 1) % 255;
+
+                //pixels[(i * 4) + (j * width * 4) + 0] = (i + frame) % 255;
+                //pixels[(i * 4) + (j * width * 4) + 1] = ((i + j) + frame) % 255;
+                //pixels[(i * 4) + (j * width * 4) + 2] = (j + frame) % 255;
+                //pixels[(i * 4) + (j * width * 4) + 3] = (255 - (((i * j) + frame) % 255));
 
             }
         }
-        
+
         // activate the window's context
         window.setActive(true);
 
         // set up OpenGL states
-       glRasterPos2i(-1200,-350);
+
         
         // clear framebuffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
         // draw to the window
         glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
@@ -149,24 +137,10 @@ int main(int argc, char *argv[]) {
         // deactivate the window's context
         window.setActive(false);
 
-
-
-       
-        
-      
-        
-
-        
-        //UI Draw 
-        window.draw(rectangle); //this is over the render but under the fpx counter
-        window.draw(text); //this appears on top of the rectangle
+        window.draw(text);
         window.display();
         frame++;
     }
-
-
-    
-
 
     
 
