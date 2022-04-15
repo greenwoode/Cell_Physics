@@ -15,6 +15,8 @@ class cell {
 	//seed for random
 	unsigned int seed;
 
+	double timeScale;
+
 	double thermalConductivity;
 
 	// old x position
@@ -61,7 +63,7 @@ class cell {
 
 	//mass is in kg
 	//size is 1 cm cube or 0.01 meters
-	//water has mass 9.97
+	//water has mass 1
 	double mass;
 
 	 //kelvin
@@ -109,6 +111,8 @@ class cell {
 	 /// </summary>
 	 /// <returns>double[2]: velocity/force component vector</return>
 	 double* getVelocityComponentVector();
+
+	 double getMass();
 
 	 /// <summer>
 	 /// get the direction the cell is moving in the X axis

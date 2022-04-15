@@ -6,6 +6,7 @@ grid::grid(int Width, int Height, double gravity) {
 	g = gravity;
 
 	Grid = new cell*[Width*Height];
+	GridFuture = new cell*[Width * Height];;
 	clearGrid();
 }
 
@@ -28,7 +29,6 @@ sf::Color grid::getColorAt(int target_x, int target_y) {
 }
 
 bool grid::targetIsEmpty(int target_x, int target_y)
-
 {
 	return &Grid[target_x + (target_y * width)] == nullptr;
 }
@@ -65,13 +65,15 @@ void grid::flush() {
 	}
 }
 
-double grid::calcTimestep()
+double grid::calcTimeStep()
 {
 	return 1.0;
 }
 
 void grid::update()
 {
+	timeStep = calcTimeStep();
+
 }
 
 cell* grid::cellAt(cell* self, int target_x, int target_y)

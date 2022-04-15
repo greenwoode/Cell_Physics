@@ -28,7 +28,7 @@ class grid {
 
 	 void flush();
 
-	 double calcTimestep();
+	 double calcTimeStep();
 
 	 void update();
 

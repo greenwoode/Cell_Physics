@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include "cell.h"
+#include "stdlib.h"
 
 cell::cell(unsigned int Seed) {
 	seed = Seed;
@@ -85,6 +86,11 @@ double * cell::getVelocityComponentVector()
 	return velocityComponentVector;
 }
 
+double cell::getMass()
+{
+	return mass;
+}
+
 int cell::getDirX() {
 	if (x - oldX > 0)
 		return 3;
@@ -95,6 +101,8 @@ int cell::getDirY() {
 	if (y - oldY > 0)
 		return 0;
 	return 1;
+
+	return y - oldY;
 }
 
 sf::Vector2f cell::getPosition()
@@ -134,7 +142,7 @@ void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int
 }
 
 void cell::update(double timeStep) {
-	double timeScale = timeStep;
+	timeScale = timeStep;
 	try {
 
 		// Temp calucation + state change
@@ -206,8 +214,8 @@ void cell::impact(cell *otherCell) {
 
 		this need to be done in both axis
 	*/
-	double otherMass = otherCell->mass;
-	double* otherInitialVComp = otherCell->getVelocityComponentVector();
+	double otherMass = (*otherCell).getMass();
+	double* otherInitialVComp = (*otherCell).getVelocityComponentVector();
 	double* ourInitalVComp = getVelocityComponentVector();
 	double totalMass = mass + otherMass;
 
@@ -226,7 +234,7 @@ void cell::impact(cell *otherCell) {
 	addForceVector(FinalVelocity);
 
 	// add final velocity to other cell
-	otherCell->addForceVector(otherFinalVelocity);
+	(*otherCell).addForceVector(otherFinalVelocity);
 
 }
 
@@ -249,8 +257,6 @@ void cell::adjustTemperature()
 		}
 	}
 	averageSurroundTemp /= 4.0;
-
-
 
 }
 
