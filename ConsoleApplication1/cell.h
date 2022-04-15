@@ -8,7 +8,6 @@ class cell {
 
  private:
 
-	 
 	 cell* cellsAround;
 	 cell* cellsAroundNext;
 
@@ -63,31 +62,38 @@ class cell {
 
 	//mass is in kg
 	//size is 1 cm cube or 0.01 meters
-	//water has mass 1
+	//water has mass 0.001
 	double mass;
 
 	 //kelvin
 	 double temperature;
 	 double meltingPoint;
 
- public:
+	 double otherMass;
+	 double* otherInitialVComp;
+	 double* ourInitalVComp;
+	 double totalMass;
 
+	 double* FinalVelocity;
+	 double* otherFinalVelocity;
 
 	 //basic enumerator
 	 // 0 - air
 	 // 1 - sand
-	 // 2 - water
-	 // 3 - snow
-	 // 4 - steam
-	 // 5 - ice
-	 // 6 - molten sand
-	 // 10 - solid (wall, used as bounding box)
+	// 2 - water
+	// 3 - snow
+	// 4 - steam
+	// 5 - ice
+	// 6 - molten sand
+	// 10 - solid (wall, used as bounding box)
 	 int typeID;
 
 	 //what material the object turns into at melting point
 	 int meltIntoID;
 	 //what material the object turns into at freezing point
 	 int freezeIntoID;
+
+ public:
 
 	 cell(unsigned int Seed = 0);
 	 cell(unsigned int Seed, int x, int y, sf::Color setColor);

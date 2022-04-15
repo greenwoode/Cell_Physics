@@ -21,6 +21,9 @@ cell::cell(unsigned int Seed) {
 	thermal = new double[2];
 	temperature = 295.0;
 
+	FinalVelocity = new double[2];
+	otherFinalVelocity = new double[2];
+
 	//place holders
 	thermalConductivity = 1;
 	mass = 10;
@@ -53,6 +56,9 @@ cell::cell(unsigned int Seed, int X, int Y, sf::Color Color)
 	thermal = new double[2];
 	temperature = 295.0;
 
+	FinalVelocity = new double[2];
+	otherFinalVelocity = new double[2];
+
 	//place holders
 	thermalConductivity = 1;
 	mass = 10;
@@ -64,7 +70,8 @@ cell::cell(unsigned int Seed, int X, int Y, sf::Color Color)
 
 bool cell::addForceVector(double* newComVector) {
 
-	forces.push(newComVector);
+	if(typeID)
+		forces.push(newComVector);
 
 	return true;
 }
@@ -214,21 +221,19 @@ void cell::impact(cell *otherCell) {
 
 		this need to be done in both axis
 	*/
-	double otherMass = (*otherCell).getMass();
-	double* otherInitialVComp = (*otherCell).getVelocityComponentVector();
-	double* ourInitalVComp = getVelocityComponentVector();
-	double totalMass = mass + otherMass;
 
-	double* FinalVelocity = new double[2];
-	double* otherFinalVelocity = new double[2];
+	otherMass = (*otherCell).getMass();
+	otherInitialVComp = (*otherCell).getVelocityComponentVector();
+	ourInitalVComp = getVelocityComponentVector();
+	totalMass = mass + otherMass;
 
 	// U1x and U2x
 	FinalVelocity[0] = (((mass - otherMass)*(ourInitalVComp[0] - otherInitialVComp[0])) / (mass + otherMass)) + otherInitialVComp[0];
 	otherFinalVelocity[0] = ((2 * mass*(ourInitalVComp[0] - otherInitialVComp[0])) / (totalMass)) + otherInitialVComp[0];
 
 	// U1y and U2y
-	FinalVelocity[0] = (((mass - otherMass)*(ourInitalVComp[0] - otherInitialVComp[0])) / (mass + otherMass)) + otherInitialVComp[0];
-	otherFinalVelocity[0] = ((2 * mass*(ourInitalVComp[0] - otherInitialVComp[0])) / (totalMass)) + otherInitialVComp[0];
+	FinalVelocity[1] = (((mass - otherMass)*(ourInitalVComp[1] - otherInitialVComp[1])) / (mass + otherMass)) + otherInitialVComp[1];
+	otherFinalVelocity[1] = ((2 * mass*(ourInitalVComp[1] - otherInitialVComp[1])) / (totalMass)) + otherInitialVComp[1];
 
 	// add final velocity to our cell
 	addForceVector(FinalVelocity);

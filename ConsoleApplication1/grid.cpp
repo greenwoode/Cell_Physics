@@ -74,6 +74,8 @@ void grid::update()
 {
 	timeStep = calcTimeStep();
 
+	//GridFuture[int(pos.x) + int(pos.y)*width] = Grid[i];
+
 }
 
 cell* grid::cellAt(cell* self, int target_x, int target_y)
@@ -87,38 +89,39 @@ cell* grid::cellAt(cell* self, int target_x, int target_y)
 double grid::getMass(cell * self, int id) {
 	switch (id) {
 		case 0:
-			// air
-			return 0.02897;
+			// solid wall
+			return 1000000;
 			break;
 		case 1:
-			// sand
-			return 0.002918475;
+			// air
+			return 0.00000129;
 			break;
 		case 2:
-			// water
-			return 0.001801528;
+			// sand
+			return 0.00153;
 			break;
 		case 3:
+			// water
+			return 0.0009998;
+			break;
+		case 4:
 			// snow
 			return 0.000090076;
 			break;
-		case 4:
+		case 5:
 			// steam
 			// Half of water according to Wiki
 			return 0.000900764;
 			break;
-		case 5:
+		case 6:
 			// ice
 			return 0.001621376;
 			break;
-		case 6:
+		case 7:
 			// molten sand
 			//TODO: Define molar mass
 			break;
-		case 10:
-			// solid wall
-			return 1.0;
-			break;
+		
 
 
 
