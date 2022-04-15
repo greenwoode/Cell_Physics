@@ -67,13 +67,26 @@ void grid::flush() {
 
 double grid::calcTimeStep()
 {
-	return 1.0;
+	double maxSpeed = 0;
+	double temp;
+	for (int i = 0; i < width * height; i++) {
+		temp = (*Grid[i]).getVelocityVector()[0];
+		if (temp > maxSpeed)
+			maxSpeed = temp;
+	}
+	return std::max(1.0, 1.0/maxSpeed);
 }
 
 void grid::update()
 {
 	timeStep = calcTimeStep();
-
+	for (int i = 0; i < width * height; i++) {
+		if (!Grid[i]) {
+			(*Grid[i]).update(timeStep);
+		}
+	}
+	//sf::Vector2f pos = (*Grid[i]).getFuturePosition();
+	//GridFuture[int(pos.x) + int(pos.y)*width] = Grid[i];
 }
 
 cell* grid::cellAt(cell* self, int target_x, int target_y)
