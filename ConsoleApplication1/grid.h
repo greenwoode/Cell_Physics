@@ -6,8 +6,10 @@ class grid {
 
  private:
 	cell** Grid;
+	cell** GridFuture;
 
 	double g;
+	double timeStep;
 
 	unsigned int width;
 	unsigned int height;
@@ -23,6 +25,12 @@ class grid {
 	 void removeCell(int target_x, int target_y);
 
 	 void deleteCell(int target_x, int target_y);
+
+	 void flush();
+
+	 double calcTimestep();
+
+	 void update();
 
 	 sf::Color getColorAt(int target_x, int target_y);
 
