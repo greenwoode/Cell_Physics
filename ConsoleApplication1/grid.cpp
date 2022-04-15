@@ -42,6 +42,7 @@ double grid::getMass(cell * self, int id) {
 			break;
 		case 6:
 			// molten sand
+			//TODO: Define molar mass
 			break;
 		case 10:
 			// solid wall
@@ -55,5 +56,90 @@ double grid::getMass(cell * self, int id) {
 	}
 
 	return 0.0;
+
+}
+
+int grid::getMeltInto(cell* self, int id) {
+	switch (id) {
+	case 0:
+		// air
+		return 0;
+		break;
+	case 1:
+		// sand
+		return 6;
+		break;
+	case 2:
+		// water
+		return 4;
+		break;
+	case 3:
+		// snow
+		return 2;
+		break;
+	case 4:
+		// steam
+		return 4;
+		break;
+	case 5:
+		// ice
+		return 2;
+		break;
+	case 6:
+		// molten sand
+		break;
+	case 10:
+		// solid wall
+		return 10;
+		break;
+
+
+
+	default:
+		return id;
+	}
+
+}
+
+int grid::getFreezeInto(cell* self, int id) {
+	switch (id) {
+	case 0:
+		// air
+		return 0;
+		break;
+	case 1:
+		// sand
+		return 1;
+		break;
+	case 2:
+		// water
+		return 5;
+		break;
+	case 3:
+		// snow
+		return 5;
+		break;
+	case 4:
+		// steam
+		return 2;
+		break;
+	case 5:
+		// ice
+		return 5;
+		break;
+	case 6:
+		// molten sand
+		//TODO
+		break;
+	case 10:
+		// solid wall
+		return 10;
+		break;
+
+
+
+	default:
+		return id;
+	}
 
 }
