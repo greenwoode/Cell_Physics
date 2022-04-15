@@ -18,15 +18,20 @@ class cell {
 
 	double thermalConductivity;
 
-	// old x position
-	double oldX;
-	// old y position
-	double oldY;
+	int colorR;
+	int colorG;
+	int colorB;
 
 	//precise x position
 	double x;
 	//precise y position
 	double y;
+
+	//precise future x position
+	double xf;
+	//precise future y position
+	double yf;
+
 	//truncated x position
 	unsigned int x_t;
 	//truncated x position
@@ -96,7 +101,9 @@ class cell {
  public:
 
 	 cell(unsigned int Seed = 0);
-	 cell(unsigned int Seed, int x, int y, sf::Color setColor);
+	 cell(unsigned int Seed, int x, int y, int ColorR, int ColorG, int ColorB, int ID, double Mass);
+
+	 ~cell();
 
 	 /// <summary>
 	 /// adds a force component vector to the cell's forceVector queue
@@ -131,8 +138,12 @@ class cell {
 	 int getDirY();
 
 	 sf::Vector2f getPosition();
-	 sf::Vector2f getExactPosition();
-	 sf::Color getColor();
+	 sf::Vector2f getFuturePosition();
+
+	 int getColorR();
+	 int getColorG();
+	 int getColorB();
+
 	 double getTemp();
 
 	 ///uses pointers
@@ -148,30 +159,12 @@ class cell {
 	 /// This function move 
 	 /// </summary>
 	 /// <param name="timeStep">: This will scale cell movement base on largest velocity (pass in from grid)</param>
-	 void update(double timeStep);
+	 void update(double timeStep, double* g);
 
 	 /// <summary>
 	 /// move cell according to velocity vector
 	 /// </summary>
-	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
-	 void move(double timeScale);
-
-	 /// <summary>
-	 /// move cell according to velocity vector
-	 /// However this one will impact with another cell first then move
-	 /// </summary>
-	 /// <param name="otherCell">: The cell which our cell is colliding with</param>
-	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
-	 void move(cell *otherCell, double timeScale);
-
-	 /// <summary>
-	 /// move cell according to velocity vector
-	 /// However this one will impact with 2 cell first then move
-	 /// </summary>
-	 /// <param name="otherCellX">: The cell which our cell is colliding with on the X axis</param>
-	 /// <param name="otherCellY">: The cell which our cell is colliding with on the Y axis</param>
-	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
-	 void move(cell *otherCellX, cell *otherCellY, double timeScale);
+	 void move();
 
 	 /// <summary>
 	 /// Calculate the force that is excerted onto both cell after they impacted
