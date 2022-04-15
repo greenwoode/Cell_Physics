@@ -51,6 +51,16 @@ int main(int argc, char *argv[]) {
             pixels[(i * 4) + (j * width * 4) + 0] = 0;
             pixels[(i * 4) + (j * width * 4) + 1] = 0;
             pixels[(i * 4) + (j * width * 4) + 2] = 0;
+		}
+	}
+	
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+
+            pixels[(i * 4) + (j * width * 4) + 0] = i % 255;
+            pixels[(i * 4) + (j * width * 4) + 1] = (i + j) % 255;
+            pixels[(i * 4) + (j * width * 4) + 2] = j % 255;
+            pixels[(i * 4) + (j * width * 4) + 3] = (255 - ((i * j) % 255));
 
         }
     }
@@ -63,7 +73,6 @@ int main(int argc, char *argv[]) {
     bool running = true;
 
     clock.restart();
-
     while (running)
     {
 
@@ -79,7 +88,6 @@ int main(int argc, char *argv[]) {
             {
                 // adjust the viewport when the window is resized
                 glViewport(0, 0, event.size.width, event.size.height);
-
             }
         }
         
@@ -101,11 +109,9 @@ int main(int argc, char *argv[]) {
             //printf("Thread %d: i=%d\n", omp_get_thread_num(), i);
             for (int j = 0; j < height; j++) {
                 //cells[i + j * width].setColor((cells[i + j * width].getColor().r + 1) % 255, 0, (cells[i + j * width].getColor().b + 1) % 255);
-
                 //pixels[(i * 4) + (j * width * 4) + 0] = (i + frame) % 255;
                 //pixels[(i * 4) + (j * width * 4) + 1] = ((i + j) + frame) % 255;
                 //pixels[(i * 4) + (j * width * 4) + 2] = (j + frame) % 255;
-
             }
         }
         */
@@ -120,11 +126,10 @@ int main(int argc, char *argv[]) {
         // clear framebuffers
         //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
         // draw to the window
         glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
-        //flush pixel array
+        //flush pixel array (In theory, prevent ghosting)
         //memset(pixels, 0, sizeof(pixels));
 
         // deactivate the window's context

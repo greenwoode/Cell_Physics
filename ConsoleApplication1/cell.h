@@ -17,9 +17,13 @@ class cell {
 
 	double thermalConductivity;
 
+	// old x position
+	double oldX;
+	// old y position
+	double oldY;
+
 	//precise x position
 	double x;
-
 	//precise y position
 	double y;
 	//truncated x position
@@ -60,10 +64,28 @@ class cell {
 	//water has mass 9.97
 	double mass;
 
-	//kelvin
-	double temperature;
+	 //kelvin
+	 double temperature;
+	 double meltingPoint;
 
  public:
+
+
+	 //basic enumerator
+	 // 0 - air
+	 // 1 - sand
+	 // 2 - water
+	 // 3 - snow
+	 // 4 - steam
+	 // 5 - ice
+	 // 6 - molten sand
+	 // 10 - solid (wall, used as bounding box)
+	 int typeID;
+
+	 //what material the object turns into at melting point
+	 int meltIntoID;
+	 //what material the object turns into at freezing point
+	 int freezeIntoID;
 
 	 cell(unsigned int Seed = 0);
 	 cell(unsigned int Seed, int x, int y, sf::Color setColor);
@@ -82,6 +104,22 @@ class cell {
 	 /// <returns>double[2]: velocity Vector</returns>
 	 double* getVelocityVector(bool update=false);
 
+	 /// <summary>
+	 /// Return the velocity componant vector of this cell
+	 /// </summary>
+	 /// <returns>double[2]: velocity/force component vector</return>
+	 double* getVelocityComponentVector();
+
+	 /// <summer>
+	 /// get the direction the cell is moving in the X axis
+	 /// </summer>
+	 int getDirX();
+
+	 /// <summer>
+	 /// get the direction the cell is moving in the Y axis
+	 /// </summer>
+	 int getDirY();
+
 	 sf::Vector2f getPosition();
 	 sf::Vector2f getExactPosition();
 	 sf::Color getColor();
@@ -95,6 +133,50 @@ class cell {
 	 void setNeighbor(int Dir, cell* pointer);
 
 	 void setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int A = 255);
+
+	 /// <summary>
+	 /// This function move 
+	 /// </summary>
+	 /// <param name="timeStep">: This will scale cell movement base on largest velocity (pass in from grid)</param>
+	 void update(double timeStep);
+
+	 /// <summary>
+	 /// move cell according to velocity vector
+	 /// </summary>
+	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
+	 void move(double timeScale);
+
+	 /// <summary>
+	 /// move cell according to velocity vector
+	 /// However this one will impact with another cell first then move
+	 /// </summary>
+	 /// <param name="otherCell">: The cell which our cell is colliding with</param>
+	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
+	 void move(cell *otherCell, double timeScale);
+
+	 /// <summary>
+	 /// move cell according to velocity vector
+	 /// However this one will impact with 2 cell first then move
+	 /// </summary>
+	 /// <param name="otherCellX">: The cell which our cell is colliding with on the X axis</param>
+	 /// <param name="otherCellY">: The cell which our cell is colliding with on the Y axis</param>
+	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
+	 void move(cell *otherCellX, cell *otherCellY, double timeScale);
+
+	 /// <summary>
+	 /// Calculate the force that is excerted onto both cell after they impacted
+	 /// using 2 equations:
+	 ///	U1 = ((m1 - m2)(u1 - u2))/(m1 + m2) + u2
+	 ///	U2 = (2m1(u1 - u2)) / (m1 + m2) + u2
+	 ///	U: Final Velocity
+	 ///	u: Inital Velocity
+	 ///	m: mass
+	 ///	1: our Cell
+	 ///	2: other cell
+	 /// </summary>
+	 /// <param name="otherCell">: The cell which our cell is colliding with</param>
+	 /// <returns>Does not return anything but add a force vector to our cell and otherCell</returns>
+	 void impact(cell *otherCell);
 
 private:
 
@@ -114,6 +196,11 @@ private:
 	void calcMagnitudeVectors();
 
 	void calcTrunc();
+
+	//Jon's functions
+	void updateMaterial(int id);
+	//TEMP USED FOR STORAGE
+	void updateInformation();
 
 };
 
