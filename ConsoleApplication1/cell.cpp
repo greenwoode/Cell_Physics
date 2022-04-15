@@ -1,4 +1,7 @@
+#include <iostream>
+#include <cmath>
 #include "cell.h"
+#include "stdlib.h"
 
 cell::cell(unsigned int Seed) {
 	seed = Seed;
@@ -21,10 +24,11 @@ cell::cell(unsigned int Seed) {
 	//place holders
 	thermalConductivity = 1;
 	mass = 10;
+	meltingPoint = 1000;
 
 	genThermal();
 
-	setColor(255, 255, 255);
+	color = sf::Color(255,255,255,255);
 
 }
 
@@ -52,7 +56,6 @@ cell::cell(unsigned int Seed, int X, int Y, sf::Color Color)
 	//place holders
 	thermalConductivity = 1;
 	mass = 10;
-
 	genThermal();
 
 	color = Color;
@@ -76,6 +79,30 @@ double* cell::getVelocityVector(bool update)
 	}
 
 	return velocityVector;
+}
+
+double * cell::getVelocityComponentVector()
+{
+	return velocityComponentVector;
+}
+
+double cell::getMass()
+{
+	return mass;
+}
+
+int cell::getDirX() {
+	if (x - oldX > 0)
+		return 3;
+	return 2;
+}
+
+int cell::getDirY() {
+	if (y - oldY > 0)
+		return 0;
+	return 1;
+
+	return y - oldY;
 }
 
 sf::Vector2f cell::getPosition()
@@ -114,6 +141,103 @@ void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int
 
 }
 
+void cell::update(double timeStep) {
+	timeScale = timeStep;
+	try {
+
+		// Temp calucation + state change
+		// Temp check 273.1
+		//	 Type check
+		//		water => temp check (temp == 273.1)
+							//=> state change
+
+
+		// Decide which neighbor to check
+		cell* destinationX = &cellsAround[getDirX()];
+		cell* destinationY = &cellsAround[getDirY()];
+
+		// moving stuff
+		// if theres no neighbors just move
+		// if there is neighbors check which direction
+		if (destinationX == nullptr && destinationY == nullptr) {
+			move(timeScale);		
+		} else {
+			if (destinationY != nullptr && destinationY != nullptr) {
+				move(destinationX, destinationY, timeScale);
+			} else if (destinationY == nullptr) {
+				move(destinationX,timeScale);
+			} else if (destinationY == nullptr) {
+				move(destinationY, timeScale);
+			}
+		}
+	} catch (const std::exception& e) {
+		std::cout << e.what();
+	}
+
+}
+
+void cell::move(double timeScale) {
+	oldX = x;
+	oldY = y;
+	x += velocityComponentVector[0] * timeScale;
+	y += velocityComponentVector[1] * timeScale;
+}
+
+void cell::move(cell *otherCell, double timeScale) {
+	impact(otherCell);
+	otherCell->move(timeScale);
+	oldX = x;
+	oldY = y;
+	x += velocityComponentVector[0] * timeScale;
+	y += velocityComponentVector[1] * timeScale;
+}
+
+void cell::move(cell *otherCellX, cell *otherCellY, double timeScale){
+	impact(otherCellX);
+	impact(otherCellY);
+	otherCellX->move(timeScale);
+	otherCellY->move(timeScale);
+	oldX = x;
+	oldY = y;
+	x += velocityComponentVector[0] * timeScale;
+	y += velocityComponentVector[1] * timeScale;
+}
+
+void cell::impact(cell *otherCell) {
+	/*
+		Equation:
+			U1 = ((m1 - m2)(u1 - u2))/(m1 + m2) + u2
+			U2 = (2m1(u1 - u2))/(m1 + m2) + u2
+
+			u = inital velocity
+			U = final velocity
+
+		this need to be done in both axis
+	*/
+	double otherMass = (*otherCell).getMass();
+	double* otherInitialVComp = (*otherCell).getVelocityComponentVector();
+	double* ourInitalVComp = getVelocityComponentVector();
+	double totalMass = mass + otherMass;
+
+	double* FinalVelocity = new double[2];
+	double* otherFinalVelocity = new double[2];
+
+	// U1x and U2x
+	FinalVelocity[0] = (((mass - otherMass)*(ourInitalVComp[0] - otherInitialVComp[0])) / (mass + otherMass)) + otherInitialVComp[0];
+	otherFinalVelocity[0] = ((2 * mass*(ourInitalVComp[0] - otherInitialVComp[0])) / (totalMass)) + otherInitialVComp[0];
+
+	// U1y and U2y
+	FinalVelocity[0] = (((mass - otherMass)*(ourInitalVComp[0] - otherInitialVComp[0])) / (mass + otherMass)) + otherInitialVComp[0];
+	otherFinalVelocity[0] = ((2 * mass*(ourInitalVComp[0] - otherInitialVComp[0])) / (totalMass)) + otherInitialVComp[0];
+
+	// add final velocity to our cell
+	addForceVector(FinalVelocity);
+
+	// add final velocity to other cell
+	(*otherCell).addForceVector(otherFinalVelocity);
+
+}
+
 //TODO
 void cell::adjustTemperature()
 {
@@ -133,8 +257,6 @@ void cell::adjustTemperature()
 		}
 	}
 	averageSurroundTemp /= 4.0;
-
-
 
 }
 
@@ -191,4 +313,26 @@ void cell::calcTrunc()
 {
 	x_t = trunc(x);
 	y_t = trunc(y);
+}
+
+//Jon's functions
+
+//Updates the material
+void cell::updateMaterial(int id) {
+	typeID = id;
+}
+
+//LOGIC to add to Cell Update
+
+void cell::updateInformation() {
+	//Temporary for sake of no errors
+	//int freeze;
+	//int meltingPoint;
+	//int temperature;
+	//int meltIntoID;
+
+	//if (temperature > meltingPoint) {
+	//	updateMaterial(meltIntoID);
+	//}
+
 }

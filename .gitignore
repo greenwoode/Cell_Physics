@@ -3,6 +3,7 @@
 
 # Log file
 *.log
+*.tlog
 
 # BlueJ files
 *.ctxt
@@ -24,3 +25,4 @@ hs_err_pid*
 
 # project files
 *.sln
+*.sqlite
