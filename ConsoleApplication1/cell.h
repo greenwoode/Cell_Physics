@@ -8,9 +8,10 @@ class cell {
 
  private:
 
-	 
-	 cell* cellsAround;
-	 cell* cellsAroundNext;
+	 bool dummyCell;
+
+	 cell** cellsAround;
+	 cell** cellsAroundNext;
 
 	//seed for random
 	unsigned int seed;
@@ -19,15 +20,20 @@ class cell {
 
 	double thermalConductivity;
 
-	// old x position
-	double oldX;
-	// old y position
-	double oldY;
+	int colorR;
+	int colorG;
+	int colorB;
 
 	//precise x position
 	double x;
 	//precise y position
 	double y;
+
+	//precise future x position
+	double xf;
+	//precise future y position
+	double yf;
+
 	//truncated x position
 	unsigned int x_t;
 	//truncated x position
@@ -63,25 +69,30 @@ class cell {
 
 	//mass is in kg
 	//size is 1 cm cube or 0.01 meters
-	//water has mass 1
+	//water has mass 0.001
 	double mass;
 
 	 //kelvin
 	 double temperature;
 	 double meltingPoint;
 
- public:
+	 double otherMass;
+	 double* otherInitialVComp;
+	 double* ourInitalVComp;
+	 double totalMass;
 
+	 double* FinalVelocity;
+	 double* otherFinalVelocity;
 
 	 //basic enumerator
 	 // 0 - air
 	 // 1 - sand
-	 // 2 - water
-	 // 3 - snow
-	 // 4 - steam
-	 // 5 - ice
-	 // 6 - molten sand
-	 // 10 - solid (wall, used as bounding box)
+	// 2 - water
+	// 3 - snow
+	// 4 - steam
+	// 5 - ice
+	// 6 - molten sand
+	// 10 - solid (wall, used as bounding box)
 	 int typeID;
 
 	 //what material the object turns into at melting point
@@ -89,8 +100,15 @@ class cell {
 	 //what material the object turns into at freezing point
 	 int freezeIntoID;
 
+ public:
+
 	 cell(unsigned int Seed = 0);
-	 cell(unsigned int Seed, int x, int y, sf::Color setColor);
+	 cell(unsigned int Seed, int x, int y, int ColorR, int ColorG, int ColorB, int ID, double Mass);
+
+	 cell(const cell& that);
+
+	 cell& operator=(const cell& that);
+	 ~cell();
 
 	 /// <summary>
 	 /// adds a force component vector to the cell's forceVector queue
@@ -125,8 +143,12 @@ class cell {
 	 int getDirY();
 
 	 sf::Vector2f getPosition();
-	 sf::Vector2f getExactPosition();
-	 sf::Color getColor();
+	 sf::Vector2f getFuturePosition();
+
+	 int getColorR();
+	 int getColorG();
+	 int getColorB();
+
 	 double getTemp();
 
 	 ///uses pointers
@@ -136,36 +158,20 @@ class cell {
 	 ///right = [3]
 	 void setNeighbor(int Dir, cell* pointer);
 
+	 int getID();
+
 	 void setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int A = 255);
 
 	 /// <summary>
 	 /// This function move 
 	 /// </summary>
 	 /// <param name="timeStep">: This will scale cell movement base on largest velocity (pass in from grid)</param>
-	 void update(double timeStep);
+	 void update(double timeStep, double* g);
 
 	 /// <summary>
 	 /// move cell according to velocity vector
 	 /// </summary>
-	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
-	 void move(double timeScale);
-
-	 /// <summary>
-	 /// move cell according to velocity vector
-	 /// However this one will impact with another cell first then move
-	 /// </summary>
-	 /// <param name="otherCell">: The cell which our cell is colliding with</param>
-	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
-	 void move(cell *otherCell, double timeScale);
-
-	 /// <summary>
-	 /// move cell according to velocity vector
-	 /// However this one will impact with 2 cell first then move
-	 /// </summary>
-	 /// <param name="otherCellX">: The cell which our cell is colliding with on the X axis</param>
-	 /// <param name="otherCellY">: The cell which our cell is colliding with on the Y axis</param>
-	 /// <param name="timeScale">: This will scale cell movement base on largest velocity (pass in from grid)</param>
-	 void move(cell *otherCellX, cell *otherCellY, double timeScale);
+	 void move();
 
 	 /// <summary>
 	 /// Calculate the force that is excerted onto both cell after they impacted

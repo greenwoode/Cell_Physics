@@ -7,64 +7,335 @@ cell::cell(unsigned int Seed) {
 	seed = Seed;
 	x = 0;
 	y = 0;
+
+	xf = 0;
+	yf = 0;
 	
 	srand(seed);
 	calcTrunc();
 
-	cell* cellsAround = new cell[4];
-	cell* cellsAroundNext = new cell[4];
+	cellsAround = NULL;
+	cellsAroundNext = NULL;
 
 	forceComponentVector = new double[2];
+	forceComponentVector[0] = 0.0;
+	forceComponentVector[1] = 0.0;
+
 	forceVector = new double[2];
+	forceVector[0] = 0.0;
+	forceVector[1] = 0.0;
+
 	velocityComponentVector = new double[2];
+	velocityComponentVector[0] = 0.0;
+	velocityComponentVector[1] = 0.0;
+
+
 	velocityVector = new double[2];
-	thermal = new double[2];
-	temperature = 295.0;
+	velocityVector[0] = 0.0;
+	velocityVector[1] = 0.0;
+
+	//thermals = new double[2];
+	//thermalsInverse = new double[2];
+	//temperature = 295.0;
+
+	FinalVelocity = new double[2];
+	FinalVelocity[0] = 0.0;
+	FinalVelocity[1] = 0.0;
+
+	otherFinalVelocity = new double[2];
+	otherFinalVelocity[0] = 0.0;
+	otherFinalVelocity[1] = 0.0;
 
 	//place holders
-	thermalConductivity = 1;
+	//thermalsConductivity = 1;
 	mass = 10;
 	meltingPoint = 1000;
 
-	genThermal();
+	//gen//thermals();
 
-	color = sf::Color(255,255,255,255);
+	colorR = 255;
+	colorG = 255;
+	colorB = 255;
+
+	typeID = 1;
+
+	otherInitialVComp = new double[2];
+	otherInitialVComp[0] = 0.0;
+	otherInitialVComp[1] = 0.0;
+
+	ourInitalVComp = new double[2];
+	ourInitalVComp[0] = 0.0;
+	ourInitalVComp[1] = 0.0;
 
 }
 
-cell::cell(unsigned int Seed, int X, int Y, sf::Color Color)
+cell::cell(unsigned int Seed, int X, int Y, int ColorR, int ColorG, int ColorB, int ID, double Mass)
 {
+
+	typeID = ID;
 
 	x = X;
 	y = Y;
+
+	xf = 0;
+	yf = 0;
 
 	seed = hypot(x * Seed, y * Seed);
 
 	srand(seed);
 	calcTrunc();
 
-	cell* cellsAround = new cell[4];
-	cell* cellsAroundNext = new cell[4];
+	cellsAround = new cell*[9];
+	memset(cellsAround, 0, 9*sizeof(nullptr));
+	cellsAroundNext = new cell*[9];
+	memset(cellsAroundNext, 0, 9 * sizeof(nullptr));
 
 	forceComponentVector = new double[2];
+	forceComponentVector[0] = 0.0;
+	forceComponentVector[1] = 0.0;
+
 	forceVector = new double[2];
+	forceVector[0] = 0.0;
+	forceVector[1] = 0.0;
+
 	velocityComponentVector = new double[2];
+	velocityComponentVector[0] = 0.0;
+	velocityComponentVector[1] = 0.0;
+
+
 	velocityVector = new double[2];
-	thermal = new double[2];
-	temperature = 295.0;
+	velocityVector[0] = 0.0;
+	velocityVector[1] = 0.0;
+
+	//thermals = new double[2];
+	//thermalsInverse = new double[2];
+	//temperature = 295.0;
+
+	FinalVelocity = new double[2];
+	FinalVelocity[0] = 0.0;
+	FinalVelocity[1] = 0.0;
+
+	otherFinalVelocity = new double[2];
+	otherFinalVelocity[0] = 0.0;
+	otherFinalVelocity[1] = 0.0;
+
+	colorR = ColorR;
+	colorG = ColorG;
+	colorB = ColorB;
 
 	//place holders
-	thermalConductivity = 1;
-	mass = 10;
-	genThermal();
+	//thermalConductivity = 1;
+	mass = Mass;
+	//genThermal();
 
-	color = Color;
+	otherInitialVComp = new double[2];
+	otherInitialVComp[0] = 0.0;
+	otherInitialVComp[1] = 0.0;
+
+	ourInitalVComp = new double[2];
+	ourInitalVComp[0] = 0.0;
+	ourInitalVComp[1] = 0.0;
+
+}
+
+cell::cell(const cell& that) {
+	printf("copy constructor called\n");
+	typeID = that.typeID;
+
+	x = that.x;
+	y = that.y;
+
+	xf = 0;
+	yf = 0;
+
+	seed = that.seed;
+
+	srand(seed);
+	calcTrunc();
+
+	cellsAround = new cell * [9];
+	memset(cellsAround, 0, 9 * sizeof(nullptr));
+	cellsAroundNext = new cell * [9];
+	memset(cellsAroundNext, 0, 9 * sizeof(nullptr));
+
+	forceComponentVector = new double[2];
+	forceComponentVector[0] = that.forceComponentVector[0];
+	forceComponentVector[1] = that.forceComponentVector[1];
+
+	forceVector = new double[2];
+	forceVector[0] = that.forceVector[0];
+	forceVector[1] = that.forceVector[1];
+
+	velocityComponentVector = new double[2];
+	velocityComponentVector[0] = that.velocityComponentVector[0];
+	velocityComponentVector[1] = that.velocityComponentVector[1];
+
+
+	velocityVector = new double[2];
+	velocityVector[0] = that.velocityVector[0];
+	velocityVector[1] = that.velocityVector[1];
+
+	//thermals = new double[2];
+	//thermalsInverse = new double[2];
+	//temperature = 295.0;
+
+	FinalVelocity = new double[2];
+	FinalVelocity[0] = that.FinalVelocity[0];
+	FinalVelocity[1] = that.FinalVelocity[1];
+
+	otherFinalVelocity = new double[2];
+	otherFinalVelocity[0] = that.otherFinalVelocity[0];
+	otherFinalVelocity[1] = that.otherFinalVelocity[1];
+
+	colorR = that.colorR;
+	colorG = that.colorG;
+	colorB = that.colorB;
+
+	//place holders
+	//thermalsConductivity = that.thermalConductivity;
+	mass = that.mass;
+	//genThermal();
+
+	otherInitialVComp = new double[2];
+	otherInitialVComp[0] = that.otherInitialVComp[0];
+	otherInitialVComp[1] = that.otherInitialVComp[1];
+
+	ourInitalVComp = new double[2];
+	ourInitalVComp[0] = that.ourInitalVComp[0];
+	ourInitalVComp[1] = that.ourInitalVComp[1];
+}
+
+cell& cell::operator=(const cell& that) {
+	printf("copy assignment called\n");
+
+	if (this != &that) {
+
+		if (!dummyCell) {
+			delete[] cellsAround;
+			delete[] cellsAroundNext;
+		}
+
+		delete[] forceComponentVector;
+		delete[] forceVector;
+		delete[] velocityComponentVector;
+		delete[] velocityVector;
+		//delete[] thermal;
+		//delete[] thermalInverse;
+
+		delete[] FinalVelocity;
+		delete[] otherFinalVelocity;
+
+
+		delete[] otherInitialVComp;
+		delete[] ourInitalVComp;
+
+		delete[] FinalVelocity;
+		delete[] otherFinalVelocity;
+
+
+		typeID = that.typeID;
+
+		x = that.x;
+		y = that.y;
+
+		xf = 0;
+		yf = 0;
+
+		seed = that.seed;
+
+		srand(seed);
+		calcTrunc();
+
+		cellsAround = new cell * [9];
+		memset(cellsAround, 0, 9 * sizeof(nullptr));
+		cellsAroundNext = new cell * [9];
+		memset(cellsAroundNext, 0, 9 * sizeof(nullptr));
+
+		forceComponentVector = new double[2];
+		forceComponentVector[0] = that.forceComponentVector[0];
+		forceComponentVector[1] = that.forceComponentVector[1];
+
+		forceVector = new double[2];
+		forceVector[0] = that.forceVector[0];
+		forceVector[1] = that.forceVector[1];
+
+		velocityComponentVector = new double[2];
+		velocityComponentVector[0] = that.velocityComponentVector[0];
+		velocityComponentVector[1] = that.velocityComponentVector[1];
+
+
+		velocityVector = new double[2];
+		velocityVector[0] = that.velocityVector[0];
+		velocityVector[1] = that.velocityVector[1];
+
+		//thermals = new double[2];
+		//thermalsInverse = new double[2];
+		//temperature = 295.0;
+
+		FinalVelocity = new double[2];
+		FinalVelocity[0] = that.FinalVelocity[0];
+		FinalVelocity[1] = that.FinalVelocity[1];
+
+		otherFinalVelocity = new double[2];
+		otherFinalVelocity[0] = that.otherFinalVelocity[0];
+		otherFinalVelocity[1] = that.otherFinalVelocity[1];
+
+		colorR = that.colorR;
+		colorG = that.colorG;
+		colorB = that.colorB;
+
+		//place holders
+		//thermalConductivity = that.thermalConductivity;
+		mass = that.mass;
+		//genThermal();
+
+		otherInitialVComp = new double[2];
+		otherInitialVComp[0] = that.otherInitialVComp[0];
+		otherInitialVComp[1] = that.otherInitialVComp[1];
+
+		ourInitalVComp = new double[2];
+		ourInitalVComp[0] = that.ourInitalVComp[0];
+		ourInitalVComp[1] = that.ourInitalVComp[1];
+
+
+	}
+	return *this;
+}
+
+cell::~cell()
+{
+	if (!dummyCell) {
+		delete[] cellsAround;
+		delete[] cellsAroundNext;
+	}
+
+	delete[] forceComponentVector;
+	delete[] forceVector;
+	delete[] velocityComponentVector;
+	delete[] velocityVector;
+	//delete[] thermal;
+	//delete[] thermalInverse;
+	delete[] FinalVelocity;
+	delete[] otherFinalVelocity;
+
+
+	delete[] otherInitialVComp;
+	delete[] ourInitalVComp;
+
+	//delete[] FinalVelocity;
+	//delete[] otherFinalVelocity;
+
 
 }
 
 bool cell::addForceVector(double* newComVector) {
 
-	forces.push(newComVector);
+	double* temp = new double[2];
+	temp[0] = newComVector[0];
+	temp[1] = newComVector[1];
+
+	if(typeID)
+		forces.push(temp);
 
 	return true;
 }
@@ -77,7 +348,7 @@ double* cell::getVelocityVector(bool update)
 		calculateVelocity();
 		calcMagnitudeVectors();
 	}
-
+	calcMagnitudeVectors();
 	return velocityVector;
 }
 
@@ -91,44 +362,43 @@ double cell::getMass()
 	return mass;
 }
 
+//vestigual
 int cell::getDirX() {
-	if (x - oldX > 0)
+	if (xf - x > 0)
 		return 3;
 	return 2;
 }
 
 int cell::getDirY() {
-	if (y - oldY > 0)
+	if (yf - y > 0)
 		return 0;
 	return 1;
 
-	return y - oldY;
 }
 
 sf::Vector2f cell::getPosition()
 {
-	return sf::Vector2f(x_t, y_t);
+	return sf::Vector2f(x, y);
 }
 
-sf::Vector2f cell::getExactPosition()
+sf::Vector2f cell::getFuturePosition()
 {
-	return sf::Vector2f();
-}
-
-sf::Color cell::getColor()
-{
-	return color;
+	return sf::Vector2f(xf, yf);
 }
 
 double cell::getTemp() {
 	return temperature;
 }
 
-void cell::setNeighbor(int Dir, cell* pointer) {
+void cell::setNeighbor(int I, cell* pointer) {
 
-	cellsAround[Dir] = cellsAroundNext[Dir];
-	cellsAroundNext[Dir] = *pointer;
+	cellsAround[I] = pointer;
+	//cellsAroundNext[I] = pointer;
 
+}
+
+int cell::getID() {
+	return typeID;
 }
 
 void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int A)
@@ -141,66 +411,42 @@ void cell::setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int
 
 }
 
-void cell::update(double timeStep) {
+int cell::getColorR()
+{
+	return colorR;
+}
+
+int cell::getColorG()
+{
+	return colorG;
+}
+
+int cell::getColorB()
+{
+	return colorB;
+}
+
+
+
+void cell::update(double timeStep, double* g) {
 	timeScale = timeStep;
-	try {
+	addForceVector(g);
 
-		// Temp calucation + state change
-		// Temp check 273.1
-		//	 Type check
-		//		water => temp check (temp == 273.1)
-							//=> state change
+	sumVectors();
+	calcMagnitudeVectors();
+	xf += velocityComponentVector[0] * timeScale;
+	yf += velocityComponentVector[1] * timeScale;
 
-
-		// Decide which neighbor to check
-		cell* destinationX = &cellsAround[getDirX()];
-		cell* destinationY = &cellsAround[getDirY()];
-
-		// moving stuff
-		// if theres no neighbors just move
-		// if there is neighbors check which direction
-		if (destinationX == nullptr && destinationY == nullptr) {
-			move(timeScale);		
-		} else {
-			if (destinationY != nullptr && destinationY != nullptr) {
-				move(destinationX, destinationY, timeScale);
-			} else if (destinationY == nullptr) {
-				move(destinationX,timeScale);
-			} else if (destinationY == nullptr) {
-				move(destinationY, timeScale);
-			}
-		}
-	} catch (const std::exception& e) {
-		std::cout << e.what();
-	}
-
+	cell* target = cellsAround[int(xf-x) + (int(yf - y) * 3)];
+	if (target && target != this)
+		impact(target);
+	else
+		move();
 }
 
-void cell::move(double timeScale) {
-	oldX = x;
-	oldY = y;
-	x += velocityComponentVector[0] * timeScale;
-	y += velocityComponentVector[1] * timeScale;
-}
-
-void cell::move(cell *otherCell, double timeScale) {
-	impact(otherCell);
-	otherCell->move(timeScale);
-	oldX = x;
-	oldY = y;
-	x += velocityComponentVector[0] * timeScale;
-	y += velocityComponentVector[1] * timeScale;
-}
-
-void cell::move(cell *otherCellX, cell *otherCellY, double timeScale){
-	impact(otherCellX);
-	impact(otherCellY);
-	otherCellX->move(timeScale);
-	otherCellY->move(timeScale);
-	oldX = x;
-	oldY = y;
-	x += velocityComponentVector[0] * timeScale;
-	y += velocityComponentVector[1] * timeScale;
+void cell::move() {
+	x = xf;
+	y = yf;
 }
 
 void cell::impact(cell *otherCell) {
@@ -214,21 +460,19 @@ void cell::impact(cell *otherCell) {
 
 		this need to be done in both axis
 	*/
-	double otherMass = (*otherCell).getMass();
-	double* otherInitialVComp = (*otherCell).getVelocityComponentVector();
-	double* ourInitalVComp = getVelocityComponentVector();
-	double totalMass = mass + otherMass;
 
-	double* FinalVelocity = new double[2];
-	double* otherFinalVelocity = new double[2];
+	otherMass = (*otherCell).getMass();
+	otherInitialVComp = (*otherCell).getVelocityComponentVector();
+	ourInitalVComp = getVelocityComponentVector();
+	totalMass = mass + otherMass;
 
 	// U1x and U2x
 	FinalVelocity[0] = (((mass - otherMass)*(ourInitalVComp[0] - otherInitialVComp[0])) / (mass + otherMass)) + otherInitialVComp[0];
 	otherFinalVelocity[0] = ((2 * mass*(ourInitalVComp[0] - otherInitialVComp[0])) / (totalMass)) + otherInitialVComp[0];
 
 	// U1y and U2y
-	FinalVelocity[0] = (((mass - otherMass)*(ourInitalVComp[0] - otherInitialVComp[0])) / (mass + otherMass)) + otherInitialVComp[0];
-	otherFinalVelocity[0] = ((2 * mass*(ourInitalVComp[0] - otherInitialVComp[0])) / (totalMass)) + otherInitialVComp[0];
+	FinalVelocity[1] = (((mass - otherMass)*(ourInitalVComp[1] - otherInitialVComp[1])) / (mass + otherMass)) + otherInitialVComp[1];
+	otherFinalVelocity[1] = ((2 * mass*(ourInitalVComp[1] - otherInitialVComp[1])) / (totalMass)) + otherInitialVComp[1];
 
 	// add final velocity to our cell
 	addForceVector(FinalVelocity);
@@ -241,15 +485,9 @@ void cell::impact(cell *otherCell) {
 //TODO
 void cell::adjustTemperature()
 {
-	
-	/*
-	cellsAround[0] = *parentGrid.cellAt(this, x, y + 1);
-	cellsAround[1] = *parentGrid.cellAt(this, x, y - 1);
-	cellsAround[2] = *parentGrid.cellAt(this, x + 1, y);
-	cellsAround[3] = *parentGrid.cellAt(this, x - 1, y);
-	*/
 
 	//TODO temp change
+	/*
 	double averageSurroundTemp = 0;
 	for (int i = 0; i < 4; i++) {
 		if (&cellsAround[i] != this) {
@@ -257,7 +495,7 @@ void cell::adjustTemperature()
 		}
 	}
 	averageSurroundTemp /= 4.0;
-
+	*/
 }
 
 void cell::genThermal()
@@ -279,7 +517,8 @@ void cell::genThermal()
 
 void cell::sumVectors()
 {
-	memset(forceComponentVector, 0, 2);
+	forceComponentVector[0] = 0.0;
+	forceComponentVector[1] = 0.0;
 
 	for (int i = 0; i < forces.size(); i++) {
 		double* tempVec = forces.front();
@@ -296,10 +535,14 @@ void cell::calculateVelocity()
 	velocityComponentVector[0] += forceComponentVector[0];
 	velocityComponentVector[0] += forceComponentVector[1];
 
+	forceComponentVector[0] = 0.0;
+	forceComponentVector[1] = 0.0;
+
 }
 
 void cell::calcMagnitudeVectors()
 {
+	calculateVelocity();
 
 	forceVector[0] = hypot(forceComponentVector[0], forceComponentVector[1]);
 	forceVector[1] = atan2(forceComponentVector[1], forceComponentVector[0]);
@@ -309,6 +552,7 @@ void cell::calcMagnitudeVectors()
 
 }
 
+//vestigule
 void cell::calcTrunc()
 {
 	x_t = trunc(x);
