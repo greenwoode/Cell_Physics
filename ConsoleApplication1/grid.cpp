@@ -12,8 +12,9 @@ grid::grid(int Width, int Height, double gravity) {
 	printf("created Grid\n");
 	GridFuture = new cell*[Width * Height];
 	printf("created GridFuture\n");
-	clearGrid();
-	flush();
+	//clearGrid();
+	//flush();
+	initialFlush();
 	printf("cleared Grid\n");
 }
 
@@ -50,14 +51,21 @@ int grid::getColorBAt(int target_x, int target_y) {
 	return 0;
 }
 
-bool grid::targetIsEmpty(int target_x, int target_y)
-{
-	return &Grid[target_x + (target_y * width)] == nullptr;
+void grid::initialFlush() {
+
+	memset(Grid, 0, width*height*sizeof(nullptr));
+	memset(GridFuture, 0, width * height * sizeof(nullptr));
+
 }
 
-bool grid::addCell(cell* Cell, int target_x, int target_y) {
-	if (targetIsEmpty(target_x, target_y)) {
-		Grid[target_x + (target_y * width)] = Cell;
+bool grid::targetIsEmpty(int target_x, int target_y)
+{
+	return Grid[target_x + (target_y * width)] == nullptr;
+}
+
+bool grid::addCell(unsigned int Seed, int X, int Y, int ColorR, int ColorG, int ColorB, int ID, double Mass) {
+	if (targetIsEmpty(X, Y)) {
+		Grid[X + (Y * width)] = new cell(Seed, X, Y, ColorR, ColorG, ColorB, ID, Mass);
 		return true;
 	}
 	return false;
@@ -66,31 +74,28 @@ bool grid::addCell(cell* Cell, int target_x, int target_y) {
 void grid::removeCell(int target_x, int target_y) {
 
 	if (!targetIsEmpty(target_x, target_y))
-		Grid[target_x + (target_y * width)] = nullptr;
+		memset(Grid[target_x + (target_y * width)], 0, sizeof(nullptr));
 
 }
 
 void grid::deleteCell(int target_x, int target_y) {
 
 	if (!targetIsEmpty(target_x, target_y)) {
-		delete &Grid[target_x + (target_y * width)];
-		Grid[target_x + (target_y * width)] = nullptr;
+		delete Grid[target_x + (target_y * width)];
+		memset(Grid[target_x + (target_y * width)], 0, sizeof(nullptr));
 	}
 
 }
+
 void grid::deleteFutureCell(int target_x, int target_y) {
 
 	printf("deleting cell...  ");
 	if (!targetIsEmpty(target_x, target_y)) {
-		try {
-			delete& Grid[target_x + (target_y * width)];
-			Grid[target_x + (target_y * width)] = nullptr;
-		}
-		catch (const std::exception& e) {
-			std::cout << e.what();
-		}
+		delete Grid[target_x + (target_y * width)];
+		printf("deleted\n");
+		Grid[target_x + (target_y * width)] = nullptr;
 	}
-	printf("deleted\n");
+	printf("nullptr assigned\n");
 
 }
 
@@ -108,9 +113,12 @@ double grid::calcTimeStep()
 	double maxSpeed = 0;
 	double temp;
 	for (int i = 0; i < width * height; i++) {
-		temp = (*Grid[i]).getVelocityVector()[0];
-		if (temp > maxSpeed)
-			maxSpeed = temp;
+		if ((*Grid[i]).getID()) {
+			temp = (*Grid[i]).getVelocityVector()[0];
+			if (temp > maxSpeed)
+				maxSpeed = temp;
+		}
+		
 	}
 	return std::max(1.0, 1.0 / maxSpeed);
 }
@@ -119,23 +127,24 @@ void grid::update()
 {
 	timeStep = calcTimeStep();
 	flush();
-	for (int i = 0; i < width * height; i++) {
-		if (!Grid[i]) {
-			sf::Vector2f pos = (*Grid[i]).getPosition();
-			for (int j = 0; j < 3; j++) {
-				for (int k = 0; k < 3; k++)
-					(*Grid[i]).setNeighbor(j + k * 3, Grid[((int(pos.x) - 1) + j)  + ((int(pos.y) - 1) + k) * width]);
+	for (int i = 1; i < width - 1; i++) {
+		for (int j = 1; j < height - 1; j++) {
+			if (Grid[i + (j * width)]) {
+				sf::Vector2f pos = (*Grid[i + (j * width)]).getPosition();
+				for (int q = 0; q < 3; q++) {
+					for (int k = 0; k < 3; k++)
+						(*Grid[i + (j * width)]).setNeighbor(q + k * 3, Grid[((int(pos.x) - 1) + q) + ((int(pos.y) - 1) + k) * width]);
+				}
+				(*Grid[i]).update(timeStep, g);
 			}
-			(*Grid[i]).update(timeStep, g);
-			delete& pos;
 		}
-			
 	}
-	for (int i = 0; i < width * height; i++) {
-		if (!Grid[i]) {
-			sf::Vector2f pos = (*Grid[i]).getFuturePosition();
-			GridFuture[int(pos.x) + int(pos.y) * width] = Grid[i];
-			delete& pos;
+	for (int i = 0; i < width - 1; i++) {
+		for (int j = 1; j < height - 1; j++) {
+			if (Grid[i + (j * width)]) {
+				sf::Vector2f pos = (*Grid[i + (j * width)]).getFuturePosition();
+				GridFuture[int(pos.x) + int(pos.y) * width] = Grid[i + (j * width)];
+			}
 		}
 	}
 	

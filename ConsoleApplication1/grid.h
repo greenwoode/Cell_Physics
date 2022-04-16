@@ -21,7 +21,7 @@ class grid {
 
 	 grid(int Width, int Height, double gravity);
 
-	 bool addCell(cell* Cell, int target_x, int target_y);
+	 bool addCell(unsigned int Seed, int X, int Y, int ColorR, int ColorG, int ColorB, int ID, double Mass);
 
 	 void removeCell(int target_x, int target_y);
 
@@ -30,6 +30,8 @@ class grid {
 	 void deleteFutureCell(int target_x, int target_y);
 
 	 void flush();
+
+	 void initialFlush();
 
 	 double calcTimeStep();
 

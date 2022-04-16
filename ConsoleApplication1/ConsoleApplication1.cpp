@@ -71,20 +71,16 @@ int main(int argc, char *argv[]) {
 
     grid Grid = grid(gridWidth, gridHeight, -9.81);
 
-    printf("created Grid\n");
-
-    cell* tempCell;
+    printf("created GridObject\n");
 
     for (int i = 0; i < gridWidth; i++) {
         for (int j = 0; j < gridHeight; j++) {
 
             if ((i == 0) || (j == 0) || (i == (gridWidth - 1)) || (j == (gridHeight - 1))) {
-                tempCell = new cell((gridWidth / i + gridHeight / j), i, j, 150, 150, 150, 0, 9999999.9);
-                Grid.addCell(tempCell, i, j);
+                Grid.addCell((gridWidth / (i+1) + gridHeight / (j+1)), i, j, 150, 150, 150, 0, 9999999.9);
             }
             else {
-                tempCell = new cell((gridWidth / i + gridHeight / j), i, j, 0, 0, 0, 1, 0.00000129);
-                Grid.addCell(tempCell, i, j);
+                Grid.addCell((gridWidth / (i + 1) + gridHeight / (j + 1)), i, j, 0, 0, 0, 1, 0.00000129);
             }
             
 
@@ -96,8 +92,7 @@ int main(int argc, char *argv[]) {
         for (int j = (gridHeight*0.75); j < (gridHeight * 0.75) + 15; j++) {
 
             Grid.deleteCell(i, j);
-            tempCell = new cell((gridWidth / i + gridHeight / j), i, j, 242, 215, 126, 2, 0.00153);
-            Grid.addCell(tempCell, i, j);
+            Grid.addCell((gridWidth / (i + 1) + gridHeight / (j + 1)), i, j, 242, 215, 126, 2, 0.00153);
 
         }
     }
@@ -133,11 +128,11 @@ int main(int argc, char *argv[]) {
         t += Grid.getTimestep();
 
         #pragma omp parallel for schedule(dynamic, 256)
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                pixels[(i * 4) + (j * width * 4) + 0] = Grid.getColorRAt(i, j);
-                pixels[(i * 4) + (j * width * 4) + 1] = Grid.getColorGAt(i, j);
-                pixels[(i * 4) + (j * width * 4) + 2] = Grid.getColorBAt(i, j);
+        for (int i = 0; i < gridWidth; i++) {
+            for (int j = (height - gridHeight); j < height; j++) {
+                pixels[(i * 4) + (j * width * 4) + 0] = Grid.getColorRAt(i, j - (height - gridHeight));
+                pixels[(i * 4) + (j * width * 4) + 1] = Grid.getColorGAt(i, j - (height - gridHeight));
+                pixels[(i * 4) + (j * width * 4) + 2] = Grid.getColorBAt(i, j - (height - gridHeight));
             }
         }
 

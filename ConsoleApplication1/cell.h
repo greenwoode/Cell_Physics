@@ -8,8 +8,10 @@ class cell {
 
  private:
 
-	 cell* cellsAround;
-	 cell* cellsAroundNext;
+	 bool dummyCell;
+
+	 cell** cellsAround;
+	 cell** cellsAroundNext;
 
 	//seed for random
 	unsigned int seed;
@@ -103,6 +105,9 @@ class cell {
 	 cell(unsigned int Seed = 0);
 	 cell(unsigned int Seed, int x, int y, int ColorR, int ColorG, int ColorB, int ID, double Mass);
 
+	 cell(const cell& that);
+
+	 cell& operator=(const cell& that);
 	 ~cell();
 
 	 /// <summary>
@@ -152,6 +157,8 @@ class cell {
 	 ///left = [2]
 	 ///right = [3]
 	 void setNeighbor(int Dir, cell* pointer);
+
+	 int getID();
 
 	 void setColor(unsigned int R, unsigned int G, unsigned int B, unsigned int A = 255);
 
