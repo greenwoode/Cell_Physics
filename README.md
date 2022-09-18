@@ -2,6 +2,8 @@
 # StarDust
 ## Cellular Automata physics engine
 
+Currently crashes due to passing refferences that garbage collection follows and deletes instead of passing values. Easy fix but time ran out.
+
 ### Installing:
 
 1. Open the project file `ConsoleApplciation1.sln` in Visual Studio 2017, or a later version with the 2017 c++ compiler installed.
